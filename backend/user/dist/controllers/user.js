@@ -24,7 +24,7 @@ export const loginUser = TryCatch(async (req, res) => {
     const message = {
         to: email,
         subject: "Your OTP code",
-        body: `YoUR OTP id ${otp}. It is valid for 5 minutes`,
+        body: `Your OTP id ${otp}. It is valid for 5 minutes`,
     };
     await publishToQueue("sent-otp", message);
     res.status(200).json({

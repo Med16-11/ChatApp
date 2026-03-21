@@ -1,14 +1,19 @@
 "use client";
 import React, { useState } from 'react';
 import { ArrowRight, Loader2, Mail } from "lucide-react";
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useAppData } from '@/context/AppContext';
+import Loading from '@/components/Loading';
+import toast from 'react-hot-toast';
 
 
 const LoginPage = () =>{
     const[email,setemail] = useState<string>("");
     const[loading,seteloading] = useState<boolean>(false);
     const router = useRouter();
+
+    const{isAuth, loading: userLoading} = useAppData()
 
     const handleSubmit = async(e: React.FormEvent<HTMLElement>):Promise<void>=>{
         e.preventDefault()
@@ -19,14 +24,16 @@ const LoginPage = () =>{
                 email,
             });
 
-            alert(data.message)
-            router.push(`/verify?email=${email}`)
+            toast.success(data.message);
+            router.push(`/verify?email=${email}`);
         }catch(error: any){
-            alert(error?.response?.data?.message || "Something went wrong. Please try again.")
+            toast.error(error?.response?.data?.message || "Something went wrong. Please try again.")
         }finally{
             seteloading(false)
         }
     }
+    if(userLoading) return <Loading/>
+    if(isAuth) return redirect("/chat");
 
   return(
     <div className = "min-h-screen bg-gray-900 flex items-center justify-center p-4"> 
